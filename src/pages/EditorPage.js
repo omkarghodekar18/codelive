@@ -6,7 +6,7 @@ import { initSocket } from '../socket';
 import { useLocation } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core';
 import { funEmoji } from '@dicebear/collection';
-import { useNavigate, Navigate, useParams } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Editor from '../components/Editor';
 import imageL from '../image.png';
@@ -113,7 +113,7 @@ function EditorPage() {
             let lflg = false;
             socketRef.current.on(ACTIONS.LEAVE, ({ userName, socketId, clients }) => {
                 setClient(clients || []); // Update state with the new clients list
-                if(lflg == false) {
+                if(lflg === false) {
                     toast.error(`${userName} left the room.`);
                     lflg = true;
                 }
