@@ -144,6 +144,7 @@ function EditorPage() {
 
     function handleLeave() {
         reactNavigator('/')
+        window.location.reload();
     }
     
     return (

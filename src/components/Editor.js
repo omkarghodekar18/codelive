@@ -55,6 +55,10 @@ function Editor({ socketRef, roomId, onCodeChange }) {
       socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
         if (code !== null) {
           codeMirrorRef.current.setValue(code);
+          setTimeout(() => {
+            const totalLines = codeMirrorRef.current.lineCount();
+            codeMirrorRef.current.setCursor(totalLines, codeMirrorRef.current.getLine(totalLines - 1).length);
+          }, 0); // Adjust delay if necessary
         }
       });
     }
