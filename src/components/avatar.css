@@ -1,0 +1,18 @@
+.CodeMirror{
+    font-size: 20px;
+    /* min-height: calc(100vh-20px); */
+    line-height: 1.2;
+}
+
+/* editor.css */
+.realTimeEditor {
+    width: 100%; /* Full viewport width */
+    height: 100%; /* Full viewport height */
+    border: none; /* Remove border */
+    outline: none; /* Remove outline */
+    resize: none; /* Prevent resizing */
+    font-size: 16px; /* Set desired font size */
+    box-sizing: border-box; /* Include padding in height/width */
+  }
+
+  
