@@ -5,6 +5,7 @@ const ACTIONS ={
     CODE_CHANGE : 'code_change',
     SYNC_CODE :'sync_code',
     LEAVE : 'leave',
+    ONSUBMIT : 'onsubmit',
 };
 
 module.exports = ACTIONS;

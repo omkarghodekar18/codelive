@@ -60,17 +60,34 @@ io.on('connection', (socket) => {
         });
     });
 
-    socket.on(ACTIONS.CODE_CHANGE, ({roomId, code})=> {
+    socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
         socket.in(roomId).emit(ACTIONS.CODE_CHANGE, {
             code,
         })
     })
 
-    socket.on(ACTIONS.SYNC_CODE,({code, socketId})=> {
+    socket.on(ACTIONS.SYNC_CODE, ({ code, socketId }) => {
         io.to(socketId).emit(ACTIONS.CODE_CHANGE, {
             code,
         });
     });
+
+
+    // Emit the change to all connected clients
+    socket.on('textUpdate', ({ newText, roomId }) => {
+        // Emit the change to all clients in the room, except the sender
+        socket.to(roomId).emit('textUpdated', { newText, roomId });
+
+    });
+
+    socket.on('outputUpdate', ({ ans, roomId }) => {
+        console.log(`Server received output update for room: ${roomId} with output: ${ans}`);
+
+        // Emit the change to all clients in the room, except the sender
+        socket.to(roomId).emit('outputUpdated', { ans, roomId });
+    });
+
+
 
     // Handle socket disconnection
     socket.on('disconnect', () => {
@@ -78,7 +95,7 @@ io.on('connection', (socket) => {
             const userIndex = rooms[roomId].findIndex((user) => user.socketId === socket.id);
             if (userIndex !== -1) {
                 // Remove the user from the room
-                
+
                 const clients = getAllConnectedClients(roomId);
                 console.log(clients);
                 const [disconnectedUser] = rooms[roomId].splice(userIndex, 1);
@@ -106,6 +123,6 @@ server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-app.get('*', (req, res, next) =>{
+app.get('*', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
