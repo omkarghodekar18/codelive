@@ -1,0 +1,85 @@
+.header {
+  text-align: center;
+  padding: 20px;
+}
+
+.title {
+  margin: 0;
+  color: #333;
+}
+
+.description {
+  margin-top: 10px;
+  color: #666;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+/* Custom Scrollbar */
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+  /* Small scrollbar width */
+  opacity: 0;
+  /* Start invisible */
+  transition: opacity 0.3s ease;
+}
+
+.chat-container:hover::-webkit-scrollbar {
+  opacity: 1;
+  /* Become visible on hover or while scrolling */
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: gray;
+  /* Gray color for the scrollbar thumb */
+  border-radius: 10px;
+  /* Rounded corners for scrollbar thumb */
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background-color: transparent;
+  /* Transparent scrollbar track */
+}
+
+
+.conversation {
+  padding: 20px;
+  height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+}
+
+
+.message {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.message.user {
+  align-self: flex-end;
+  /* background-color: #007bff; */
+  background: #232423;
+  color: white;
+  padding-left: 15px; 
+  max-width: 80%;
+  padding-right : 15px;
+  border-radius: 25px;
+}
+
+
+
+.message.assistant {
+  align-self: flex-start;
+  max-width: 85%;
+  /* background-color: #f1f1f1; */
+}

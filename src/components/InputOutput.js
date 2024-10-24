@@ -9,27 +9,47 @@ function InputOutput({ socketRef, roomId, codeRef }) {
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on('textUpdated', ({ newText, roomId }) => {
-        console.log('Client received update:', newText, 'for room:', roomId);
+        // console.log('Client received update:', newText, 'for room:', roomId);
         setText(newText);
       });
 
       if (socketRef.current) {
         socketRef.current.on('outputUpdated', ({ ans, roomId }) => {
-          console.log('Client received outputUpdated for room:', roomId, 'with output:', ans);
+          // console.log('Client received outputUpdated for room:', roomId, 'with output:', ans);
           setOutputText(ans);
         });
       }
     }
   }, [socketRef.current])
 
+  // async function sendPost(code) {
+  //   // if(roomId && code && socketRef.current) {
+  //     const data = {
+  //       socketId: socketRef.current ? socketRef.current.id : null, // Only send necessary serializable properties
+  //       roomId,
+  //       code
+  //     };
+  //     try {
+  //       const response = await fetch('http://localhost:5000/submit', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify(data), // Send serializable data
+  //       });
+
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   // }
+  // }
   async function compileHandler() {
 
     setLoader(true);
-
+    
     // 93 js   100 py   91 java   54 c++
     const code = codeRef.current;
     const input = text;
-
     const url = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=false&fields=*';
     const options = {
       method: 'POST',
@@ -51,7 +71,6 @@ function InputOutput({ socketRef, roomId, codeRef }) {
       const result = await response.json();
       const tokenId = result.token;
 
-      console.log(tokenId);
       var statusCode = 2;
       var getR;
 
@@ -72,10 +91,9 @@ function InputOutput({ socketRef, roomId, codeRef }) {
               let compOutput = atob(getR.compile_output);
               let ans = status + "\n" + compOutput;
               setOutputText(ans);
-              console.log(ans);
+              // console.log(ans);
               if (socketRef.current) {
                 socketRef.current.emit('outputUpdate', { ans, roomId });
-                console.log("Emitting outputUpdate:", ans, roomId);
               }
               setLoader(false);
             }
@@ -85,7 +103,6 @@ function InputOutput({ socketRef, roomId, codeRef }) {
 
               if (socketRef.current) {
                 socketRef.current.emit('outputUpdate', { ans, roomId });
-                console.log("Emitting outputUpdate:", ans, roomId);
               }
               setLoader(false);
             }
@@ -94,15 +111,17 @@ function InputOutput({ socketRef, roomId, codeRef }) {
 
           }
         } catch (error) {
-          console.error(error);
+          // console.error(error);
         }
       };
 
       setTimeout(checkStatus, 1000);
     }
     catch (error) {
-      console.error("error at compile : " + error);
+      // console.error("error at compile : " + error);
     }
+
+    // sendPost(code);
   }
 
   async function getSubmission(tokenId) {
@@ -150,7 +169,12 @@ function InputOutput({ socketRef, roomId, codeRef }) {
             loader ? (<MoonLoader color="#cecece" />) : (<div />)
           }
         </div>
-        <h4 className='font-semibold text-2xl h-[50px] bg-[#181919] p-2 text-white' >Input:</h4>
+        
+        <div className='bg-[#181919] flex justify-between items-end'>
+        <h4 className='font-semibold text-2xl h-[50px]  p-2 text-white' >Input:</h4>
+        <h1 className='text-green-600 p-2'>Enter the Inputs first according to program</h1>
+        </div>
+
         <textarea className='w-full resize-none p-2 border-none outline-none focus:outline-none text-white bg-[#222222] h-[calc(100%-50px)] text-lg' placeholder='' value={text} onChange={handleChange} />
       </div>
       <div className='input bg-white h-[50%] w-[100%] overflow-hidden'>
