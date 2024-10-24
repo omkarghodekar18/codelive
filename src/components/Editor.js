@@ -3,6 +3,7 @@ import Codemirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material-darker.css';
 // import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/clike/clike';
 import 'codemirror/addon/edit/closetag';
 import ACTIONS from '../Actions';
 import 'codemirror/addon/edit/closebrackets';
@@ -17,6 +18,7 @@ function Editor({ socketRef, roomId, onCodeChange }) {
       // Initialize CodeMirror only once
       codeMirrorRef.current = Codemirror.fromTextArea(editorRef.current, {
         // mode: { name: 'javascript', json: true },
+        mode: { name: 'clike' },
         theme: 'material-darker',
         autoCloseTags: true,
         autoCloseBrackets: true,

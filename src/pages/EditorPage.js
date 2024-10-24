@@ -1,5 +1,6 @@
 import React from 'react'
 import Client from "../components/Client"
+import Chatbot from '../components/Chatbot';
 import { useState, useRef, useEffect } from 'react'
 import ACTIONS from '../Actions';
 import { initSocket } from '../socket';
@@ -54,6 +55,8 @@ function EditorPage() {
     const codeRef = useRef(null);
     const reactNavigator = useNavigate(null);
     const [clients, setClient] = useState([])
+    const [botOn, setBotOn] = useState(false);
+    const [mute, setMute] = useState(false);
 
     useEffect(() => {
         const init = async () => {
@@ -146,6 +149,10 @@ function EditorPage() {
         window.location.reload();
     }
 
+    function chatHandler() {
+        setBotOn(!botOn);
+    }
+
 
     return (
 
@@ -155,6 +162,10 @@ function EditorPage() {
 
                 <img src={imageL} className='h-[100%]' />
                 <div className='flex justify-evenly'>
+                    <button onClick={chatHandler} className='text-white bg-zinc-600 mr-4 py-2 px-3'>Chat with AI</button>
+                    {
+                        botOn ? (<Chatbot color="#cecece" setBotOn={setBotOn} codeRef={codeRef} />) : (<div />)
+                    }
                     <button className='bg-white py-1 text-base rounded-lg font-medium focus:outline-none px-4 mr-2' onClick={handleCopy}>Copy ROOM ID</button>
                     <button className='bg-green-500 text-green-950  text-base font-medium hover:bg-green-700 rounded-lg py-1 px-8 mr-2' onClick={handleLeave}>Leave</button>
                 </div>
@@ -173,6 +184,12 @@ function EditorPage() {
                                 return <Client key={client.socketId} userName={client.userName} avatar={avatar} />
                             })
                         }
+                    </div>
+
+                    <div className='overflow-hidden absolute w-full bottom-0 p-5'>
+                        <button className="text-white px-2 py-1 bg-blue-500 w-full rounded-sm">
+                            Mute
+                        </button>
                     </div>
 
                 </div>

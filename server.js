@@ -2,12 +2,62 @@ const { Server } = require('socket.io');
 const http = require('http');
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose'); 
 const path = require('path');
 const ACTIONS = require('./src/Actions'); // Ensure actions are correctly imported
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI('AIzaSyCdrlNjaAMpBkI1tL41UqyK7ii1pf1vRxY');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const cors = require('cors');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const corsOptions = {
+  origin: '*',
+}
+app.use(cors(corsOptions));
+
+
+// mongoose.connect('mongodb+srv://admin:omkar14@cluster0.ehlb8cz.mongodb.net/project', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+// })
+// .then(() => console.log('Connected to MongoDB'))
+// .catch(err => console.log(err));
+
+// const DataSchema = new mongoose.Schema({
+//     socketId: {
+//         type: String,    // Assuming socketId is a string (ID or identifier)
+//         required: true,  // Set to true if this field is mandatory
+//     },
+//     roomId: {
+//         type: String,    // Assuming roomId is also a string (could be an alphanumeric identifier)
+//         required: true,
+//     },
+//     code: {
+//         type: String,    // Assuming code is a string (source code or a unique identifier)
+//         required: true,
+//     },
+// });
+
+// const Data = mongoose.model('Data', DataSchema);
+
+// app.post('/submit', async (req, res) => {
+//     const newData = new Data(req.body);
+//     try {
+//         await newData.save();
+//         res.status(201).send('Data saved');
+//     } catch (err) {
+//         res.status(500).send('Server Error: Unable to save data'); // Send error response
+//     }
+// });
+
 
 const server = http.createServer(app);
 const io = new Server(server);
 
+// If you're handling URL-encoded form data, add this as well
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('build'));
 
 // Room management: each room ID maps to an array of user objects
@@ -81,7 +131,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('outputUpdate', ({ ans, roomId }) => {
-        console.log(`Server received output update for room: ${roomId} with output: ${ans}`);
+        // console.log(`Server received output update for room: ${roomId} with output: ${ans}`);
 
         // Emit the change to all clients in the room, except the sender
         socket.to(roomId).emit('outputUpdated', { ans, roomId });
@@ -97,7 +147,7 @@ io.on('connection', (socket) => {
                 // Remove the user from the room
 
                 const clients = getAllConnectedClients(roomId);
-                console.log(clients);
+                // console.log(clients);
                 const [disconnectedUser] = rooms[roomId].splice(userIndex, 1);
                 // const disconnectedUsername = disconnectedUser.filter((user) => user.sockeId === socket.id);
                 // Notify other clients about the disconnection
@@ -106,7 +156,7 @@ io.on('connection', (socket) => {
                     userName: disconnectedUser.username,
                     socketId: disconnectedUser.socketId,
                 });
-                console.log(clients);
+                // console.log(clients);
                 io.to(roomId).emit(ACTIONS.LEAVE, {
                     clients,
                     userName: disconnectedUser.userName,
@@ -115,8 +165,49 @@ io.on('connection', (socket) => {
             }
         }
     });
-
 });
+
+
+
+let history = [
+
+    {
+        role: "user",
+        parts: [{ text: "Hello" }],
+    },
+    {
+        role: "model",
+        parts: [{ text: "Great to meet you. What would you like to know?" }],
+    },
+
+];
+
+
+app.post('/ask', async (req, res) => {
+
+    let message = req.body.userMessage;
+
+    history.push({ 'role': 'user', parts: [{ text: message }] });
+
+    try {
+        const chat = model.startChat({
+            history // This should refer to the chat history, ensure it's defined or passed properly
+        });
+        let result = await chat.sendMessage(message);
+
+        let responseMessage = result.response.candidates[0].content.parts[0].text
+
+        history.push({ 'role': 'model', parts: [{ text: responseMessage }] });
+
+        res.send(responseMessage);
+        // console.log(responseMessage) 
+    }
+    catch (err) {
+        console.error(err);
+        res.send(err)
+    }
+
+})
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

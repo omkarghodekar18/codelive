@@ -13,7 +13,7 @@ function Home() {
 
   function createNewRoom(event) {
     event.preventDefault()
-    const roomId = uuidv4();
+    const roomId = uuidv4().substring(0,4);
     setRoomId(roomId);
     console.log(roomId);
     toast.success('Room created successfully!');
