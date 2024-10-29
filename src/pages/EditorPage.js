@@ -1,6 +1,5 @@
 import React from 'react'
 import Client from "../components/Client"
-import Chatbot from '../components/Chatbot';
 import { useState, useRef, useEffect } from 'react'
 import ACTIONS from '../Actions';
 import { initSocket } from '../socket';
@@ -11,6 +10,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import '../components/avatar.css';
 import toast from 'react-hot-toast';
 import InputOutput from '../components/InputOutput';
+import Chatbot from '../components/Chatbot';
 import Editor from '../components/Editor';
 import imageL from '../imageB.png';
 

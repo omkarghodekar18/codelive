@@ -27,7 +27,7 @@ function Chatbot({ setBotOn, codeRef }) {
     }, [conversation, isTyping]); // Update when conversation or isTyping changes
 
     const sendMessageAPI = async () => {
-        const res = await axios.post(`http://localhost:5000/ask`, {
+        const res = await axios.post(process.env.REACT_APP_BACKEND_URL+`/ask`, {
             userMessage: message,
             history: conversation,
         });
