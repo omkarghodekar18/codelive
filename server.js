@@ -1,12 +1,13 @@
 const { Server } = require('socket.io');
 const http = require('http');
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose'); 
 const path = require('path');
 const ACTIONS = require('./src/Actions'); // Ensure actions are correctly imported
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI('AIzaSyCdrlNjaAMpBkI1tL41UqyK7ii1pf1vRxY');
+const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const cors = require('cors');
 app.use(express.json());
@@ -169,25 +170,26 @@ io.on('connection', (socket) => {
 
 
 
-let history = [
+// let history = [
 
-    {
-        role: "user",
-        parts: [{ text: "Hello" }],
-    },
-    {
-        role: "model",
-        parts: [{ text: "Great to meet you. What would you like to know?" }],
-    },
+//     {
+//         role: "user",
+//         parts: [{ text: "Hello" }],
+//     },
+//     {
+//         role: "model",
+//         parts: [{ text: "Great to meet you. What would you like to know?" }],
+//     },
 
-];
+// ];
 
 
 app.post('/ask', async (req, res) => {
 
     let message = req.body.userMessage;
-
-    history.push({ 'role': 'user', parts: [{ text: message }] });
+    let history = req.body.history;
+    history = history.slice(1);
+    // history.push({ 'role': 'user', parts: [{ text: message }] });
 
     try {
         const chat = model.startChat({
@@ -197,7 +199,7 @@ app.post('/ask', async (req, res) => {
 
         let responseMessage = result.response.candidates[0].content.parts[0].text
 
-        history.push({ 'role': 'model', parts: [{ text: responseMessage }] });
+        // history.push({ 'role': 'model', parts: [{ text: responseMessage }] });
 
         res.send(responseMessage);
         // console.log(responseMessage) 
