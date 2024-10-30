@@ -12,7 +12,6 @@ import toast from 'react-hot-toast';
 import InputOutput from '../components/InputOutput';
 import Chatbot from '../components/Chatbot';
 import Editor from '../components/Editor';
-import VoiceChatComponent from '../components/VoiceChatComponent';
 import imageL from '../imageB.png';
 import { FaMicrophone } from "react-icons/fa6";
 import { IoMdMicOff } from "react-icons/io";
