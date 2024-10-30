@@ -139,6 +139,10 @@ io.on('connection', (socket) => {
     });
 
 
+    socket.on('audio-stream', (data) => {
+
+        socket.in(data.roomId).emit('audio-stream', { data });
+    });
 
     // Handle socket disconnection
     socket.on('disconnect', () => {
@@ -210,6 +214,8 @@ app.post('/ask', async (req, res) => {
     }
 
 })
+
+
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

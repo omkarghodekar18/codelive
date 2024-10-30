@@ -12,7 +12,12 @@ import toast from 'react-hot-toast';
 import InputOutput from '../components/InputOutput';
 import Chatbot from '../components/Chatbot';
 import Editor from '../components/Editor';
+import VoiceChatComponent from '../components/VoiceChatComponent';
 import imageL from '../imageB.png';
+import { FaMicrophone } from "react-icons/fa6";
+import { IoMdMicOff } from "react-icons/io";
+
+
 
 const names = ["Wyatt", "Alexander", "Emery", "Easton", "Luis", "Andrea", "Sawyer", "Mason", "Chase", "Maria", "Leo", "Aiden", "Vivian", "Kingston", "Liliana", "Caleb", "Sarah", "Eliza", "Eden", "Christian"];
 let visited = new Set();
@@ -56,7 +61,11 @@ function EditorPage() {
     const reactNavigator = useNavigate(null);
     const [clients, setClient] = useState([])
     const [botOn, setBotOn] = useState(false);
-    const [mute, setMute] = useState(false);
+    const [mute, setMute] = useState(true);
+    const localStreamRef = useRef(null);
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const audioRef = useRef(new Audio()); // Ref to manage the audio element
 
     useEffect(() => {
         const init = async () => {
@@ -72,17 +81,14 @@ function EditorPage() {
                 reactNavigator('/');
             }
 
-
             // Emit JOIN event to the server with roomId and userName
             socketRef.current.emit(ACTIONS.JOIN, {
                 roomId: location.state.roomId,
                 userName: location.state.userName,
             });
 
-
             // Listener for the JOINED event
             const handleJoined = ({ clients, userName, socketId }) => {
-                // Display the toast only for other users joining
                 if (userName !== location.state.userName) {
                     toast.success(`${userName} joined the ROOM`);
                     console.log(`${userName} joined the ROOM`);
@@ -90,49 +96,263 @@ function EditorPage() {
                 setClient(clients);
             };
 
-            // Add listener for the JOINED action
             let flg = false;
-            socketRef.current.on(
-                ACTIONS.JOINED,
-                ({ clients, userName, socketId }) => {
-                    if (userName !== location.state?.userName && flg !== true) {
-                        toast.success(`${userName} joined the room.`);
-                        console.log(`${userName} joined`);
-                        flg = true;
-                    }
-                    setClient(clients);
-                    socketRef.current.emit(ACTIONS.SYNC_CODE, {
-                        code: codeRef.current,
-                        socketId,
-                    });
+            socketRef.current.on(ACTIONS.JOINED, ({ clients, userName, socketId }) => {
+                if (userName !== location.state?.userName && flg !== true) {
+                    toast.success(`${userName} joined the room.`);
+                    console.log(`${userName} joined`);
+                    flg = true;
                 }
-            );
-
-            // socketRef.current.emit(ACTIONS.SYNC_CODE, {});
+                setClient(clients);
+                socketRef.current.emit(ACTIONS.SYNC_CODE, {
+                    code: codeRef.current,
+                    socketId,
+                });
+            });
 
             socketRef.current.on(ACTIONS.DISCONNECTED, ({ clients, userName, socketId }) => {
-                setClient(clients || []);// Update state with the new clients list
+                setClient(clients || []);
             });
+
             let lflg = false;
             socketRef.current.on(ACTIONS.LEAVE, ({ userName, socketId, clients }) => {
-                setClient(clients || []); // Update state with the new clients list
+                setClient(clients || []);
                 if (lflg === false) {
                     toast.error(`${userName} left the room.`);
                     lflg = true;
                 }
             });
-            // Cleanup function to remove the listener and disconnect socket
+
             return () => {
                 if (socketRef.current) {
                     socketRef.current.off(ACTIONS.DISCONNECTED);
-                    socketRef.current.off(ACTIONS.JOINED, handleJoined); // Remove specific listener
-                    socketRef.current.disconnect(); // Disconnect socket to avoid memory leaks
+                    socketRef.current.off(ACTIONS.JOINED, handleJoined);
+                    socketRef.current.disconnect();
                 }
             };
         };
 
         init();
+
     }, [reactNavigator, location.state.roomId, location.state.userName]);
+
+    // useEffect(() => {
+    //     const getUserMedia = async () => {
+    //         try {
+    //             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    //             localStreamRef.current = stream;
+
+    //             // Emit the audio stream to the server
+    //             emitAudioStream(stream);
+    //         } catch (error) {
+    //             console.error('Error accessing media devices.', error);
+    //         }
+    //     };
+
+    //     const emitAudioStream = (stream) => {
+    //         if (socketRef.current) {
+    //             const audioTrack = stream.getAudioTracks()[0]; // Get the audio track
+
+    //             // Convert audio track to Blob
+    //             const mediaRecorder = new MediaRecorder(stream);
+    //             const audioChunks = [];
+
+    //             mediaRecorder.ondataavailable = (event) => {
+    //                 audioChunks.push(event.data);
+    //             };
+
+    //             mediaRecorder.onstop = () => {
+    //                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    //                 const reader = new FileReader();
+    //                 reader.onloadend = () => {
+    //                     const base64data = reader.result.split(',')[1]; // Get base64 string
+    //                     console.log('Emitting audio stream:');
+    //                     socketRef.current.emit('audio-stream', {
+    //                         roomId: location.state.roomId,
+    //                         audio: base64data, // Send base64 audio data
+    //                     });
+    //                 };
+    //                 reader.readAsDataURL(audioBlob);
+    //             };
+
+    //             mediaRecorder.start();
+    //             setTimeout(() => {
+    //                 mediaRecorder.stop(); // Stop after a certain duration (adjust as needed)
+    //             }, 3000); // Change the duration as per your requirement
+    //         } else {
+    //             console.error('Socket is not initialized.');
+    //         }
+    //     };
+
+    //     // Call getUserMedia to start capturing audio
+    //     getUserMedia();
+
+    //     // Set up listener for incoming audio streams
+    //     const handleAudioStream = (data) => {
+    //             if (data.data.audio) {
+    //             console.log('received audio stream')
+    //             const byteCharacters = atob(data.data.audio);
+    //             const byteNumbers = new Array(byteCharacters.length);
+    //             for (let i = 0; i < byteCharacters.length; i++) {
+    //                 byteNumbers[i] = byteCharacters.charCodeAt(i);
+    //             }
+    //             const byteArray = new Uint8Array(byteNumbers);
+    //             const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
+    //             const audioUrl = URL.createObjectURL(audioBlob);
+
+    //             // Use the Audio object directly
+    //             const audio = new Audio(audioUrl);
+    //             audio.play().catch((error) => {
+    //                 console.error('Error playing audio:', error);
+    //             });
+
+    //             // Clean up
+    //             audio.onended = () => {
+    //                 URL.revokeObjectURL(audioUrl);
+    //             };
+    //         }
+    //     };
+
+
+
+    //     if (socketRef.current) {
+    //         socketRef.current.on('audio-stream', handleAudioStream);
+    //     }
+
+    //     return () => {
+    //         if (socketRef.current) {
+    //             socketRef.current.off('audio-stream', handleAudioStream);
+    //         }
+    //     };
+    // });
+
+    useEffect(() => {
+        // Initialize socket connection
+        const getUserMedia = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                localStreamRef.current = stream;
+
+                // Prepare media recorder
+                mediaRecorderRef.current = new MediaRecorder(stream);
+                mediaRecorderRef.current.ondataavailable = (event) => {
+                    audioChunksRef.current.push(event.data);
+                };
+
+                mediaRecorderRef.current.onstop = () => {
+                    console.log('Media recorder stopped'); // Debug check
+                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+
+                    if (audioBlob.size > 0) { // Check if the blob has data
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            const base64data = reader.result.split(',')[1]; // Get base64 string
+
+                            // Emit the audio data if socket is connected
+                            if (socketRef.current && socketRef.current.connected) {
+                                socketRef.current.emit('audio-stream', {
+                                    audio: base64data,
+                                    roomId: location.state.roomId,
+                                });
+                                console.log('Audio data sent to server');
+                            } else {
+                                console.error('Socket not connected');
+                            }
+                        };
+                        reader.readAsDataURL(audioBlob);
+                    } else {
+                        console.error('Audio blob is empty');
+                    }
+
+                    audioChunksRef.current = []; // Clear audio chunks after sending
+                };
+
+            } catch (error) {
+                console.error('Error accessing media devices.', error);
+            }
+        };
+
+        // Call getUserMedia to start capturing audio
+        getUserMedia();
+
+        // Set up listener for incoming audio streams
+
+        const handleAudioStream = (data) => {
+            console.log(data)
+
+            if (data.data.audio) {
+                console.log('Received audio stream');
+                const byteCharacters = atob(data.data.audio);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const audioBlob = new Blob([byteArray], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                // Use the Audio object directly
+                const audio = new Audio(audioUrl);
+                audio.play().catch((error) => {
+                    console.error('Error playing audio:', error);
+                });
+
+                // Clean up
+                audio.onended = () => {
+                    URL.revokeObjectURL(audioUrl);
+                };
+            }
+        };
+
+        // Set up socket listener
+        if (socketRef.current) {
+            socketRef.current.on('audio-stream', handleAudioStream);
+        }
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.off('audio-stream', handleAudioStream);
+                // socketRef.current.disconnect();
+            }
+            if (mediaRecorderRef.current) {
+                mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop()); // Stop audio tracks on cleanup
+            }
+        };
+    }, [socketRef.current]);
+
+    const startRecording = () => {
+
+        setMute(prev => !prev);
+        console.log(mute);
+
+        if (mediaRecorderRef.current && localStreamRef.current) {
+            audioChunksRef.current = []; // Reset chunks before starting
+            mediaRecorderRef.current.start(); // Start recording
+            console.log('Recording started');
+        }
+    };
+
+
+    const stopRecording = () => {
+
+        setMute(prev => !prev);
+        console.log(mute);
+
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop(); // Stop recording
+            console.log('Recording stopped');
+        }
+    };
+
+    // const handleMuteUnmute = () => {
+    //     if (localStreamRef.current) {
+    //         localStreamRef.current.getTracks().forEach(track => {
+    //             if (track.kind === 'audio') {
+    //                 track.enabled = !mute; // Toggle audio track
+    //             }
+    //         });
+    //     }
+    // };
 
 
     if (!location.state) {
@@ -152,6 +372,14 @@ function EditorPage() {
     function chatHandler() {
         setBotOn(!botOn);
     }
+
+    const toggleRecording = () => {
+        if (!mute) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    };
 
 
     return (
@@ -186,12 +414,21 @@ function EditorPage() {
                         }
                     </div>
 
-                    <div className='overflow-hidden absolute w-full bottom-0 p-5'>
-                        <button className="text-white px-2 py-1 bg-blue-500 w-full rounded-sm">
-                            Mute
+
+
+                    <div className='absolute  bottom-0  w-full flex-col p-7 flex gap-2 items-center justify-center '>
+                        <button className='text-xl overflow-hidden' onClick={toggleRecording}>
+                        {
+                            !mute? <FaMicrophone className='bg-[#d9d9d9] w-full h-full text-black p-5 rounded-full  ' /> : <IoMdMicOff className='bg-[#323439] w-full h-full text-[#d9d9d9] p-5 rounded-full ' />
+                        }
                         </button>
+                        <div className='text-[#d9d9d9] text-sm h-[20px] w-full text-center tracking-normal'>{ !mute? 'Listening...': ''}</div>
                     </div>
 
+                    {/* <VoiceChatComponent socketRef={socketRef} roomId={location.state.roomId} /> */}
+                    {/* <button className="text-white px-2 py-1 bg-blue-500 w-full rounded-sm" onClick={handleMuteUnmute}>
+                            {mute ? 'Unmute' : 'Mute'}
+                        </button> */}
                 </div>
 
                 <div className='w-[calc(65vw-150px)] h-[100%] flex-grow'>
