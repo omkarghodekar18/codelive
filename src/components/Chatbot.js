@@ -49,13 +49,18 @@ function Chatbot({ setBotOn, codeRef }) {
         const currentMessage = message.trim();
 
         if (!currentMessage) {
-            alert('Please enter a message');
             return;
         }
         setConversations((prevConversation) => [...prevConversation, { role: 'user', parts: [{ text: message }] }])
         setIsTyping(true);
         mutation.mutate(currentMessage);
         setMessage('');
+    }
+
+    const handleEnter = (event) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
+        }
     }
 
 
@@ -85,7 +90,7 @@ function Chatbot({ setBotOn, codeRef }) {
                                 }
 
                                 <div>
-                                <MarkdownMessage text={entry.parts[0].text} />
+                                    <MarkdownMessage text={entry.parts[0].text} />
                                     {/* {entry.parts[0].text} */}
                                 </div>
                             </div>
@@ -105,6 +110,8 @@ function Chatbot({ setBotOn, codeRef }) {
                 <div className={`px-5 flex justify-between items-center w-full bg-[#1E1F20] text-[#BDC1C6] ${isFocused ? 'bg-[#292a2d]' : 'bg-[#1E1F20]'}  rounded-full`}>
 
                     <input type='text' className='bg-transparent text w-full p-3 rounded-full focus:bg-[#292a2d] focus:outline-none' value={message} placeholder='Ask question'
+
+                        onKeyUp={handleEnter}
                         onChange={(e) => setMessage(e.target.value)}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)} />
