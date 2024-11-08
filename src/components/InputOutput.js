@@ -20,7 +20,7 @@ function InputOutput({ socketRef, roomId, codeRef }) {
         });
       }
     }
-  }, [socketRef.current])
+  }, socketRef.current)
 
   // async function sendPost(code) {
   //   // if(roomId && code && socketRef.current) {

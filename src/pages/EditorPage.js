@@ -3,7 +3,7 @@ import Client from "../components/Client"
 import { useState, useRef, useEffect } from 'react'
 import ACTIONS from '../Actions';
 import { initSocket } from '../socket';
-import { json, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core';
 import { funEmoji } from '@dicebear/collection';
 import { useNavigate, Navigate } from 'react-router-dom';
@@ -17,9 +17,9 @@ import { FaMicrophone } from "react-icons/fa6";
 import { IoMdMicOff } from "react-icons/io";
 
 
-
 const names = ["Wyatt", "Alexander", "Emery", "Easton", "Luis", "Andrea", "Sawyer", "Mason", "Chase", "Maria", "Leo", "Aiden", "Vivian", "Kingston", "Liliana", "Caleb", "Sarah", "Eliza", "Eden", "Christian"];
 let visited = new Set();
+
 
 
 function create() {
@@ -64,7 +64,6 @@ function EditorPage() {
     const localStreamRef = useRef(null);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
-    const audioRef = useRef(new Audio()); // Ref to manage the audio element
 
     useEffect(() => {
         const init = async () => {
@@ -225,6 +224,7 @@ function EditorPage() {
     //     };
     // });
 
+// pushed working
     useEffect(() => {
         // Initialize socket connection
         const getUserMedia = async () => {
@@ -343,15 +343,119 @@ function EditorPage() {
         }
     };
 
-    // const handleMuteUnmute = () => {
-    //     if (localStreamRef.current) {
-    //         localStreamRef.current.getTracks().forEach(track => {
-    //             if (track.kind === 'audio') {
-    //                 track.enabled = !mute; // Toggle audio track
+
+    // testingg
+    
+    // useEffect(() => {
+    //     const startVoiceStream = async () => {
+    //         try {
+    //             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    //             localStreamRef.current = stream;
+    
+    //             // Set up media recorder to continuously record
+    //             mediaRecorderRef.current = new MediaRecorder(stream);
+    //             mediaRecorderRef.current.ondataavailable = (event) => {
+    //                 if (event.data.size > 0) {
+    //                     const reader = new FileReader();
+    //                     reader.onloadend = () => {
+    //                         const base64data = reader.result.split(',')[1];
+    
+    //                         // Emit each audio chunk to the server in real-time
+    //                         if (socketRef.current && socketRef.current.connected) {
+
+    //                             socketRef.current.emit('audio-stream', {
+    //                                 audio: base64data,
+    //                                 roomId: location.state.roomId,
+    //                             });
+    //                             console.log('Streaming audio chunk to server');
+    //                         }
+    //                     };
+    //                     reader.readAsDataURL(event.data);
+    //                 }
+    //             };
+    
+    //         } catch (error) {
+    //             console.error('Error accessing media devices.', error);
+    //         }
+    //     };
+
+    //     startVoiceStream()
+    
+    //     const handleAudioStream = (data) => {
+    //         if (data.data.audio) {
+    //             try {
+    //                 // Decode the base64 audio data
+    //                 const byteCharacters = atob(data.data.audio);
+    //                 const byteNumbers = new Array(byteCharacters.length);
+    //                 for (let i = 0; i < byteCharacters.length; i++) {
+    //                     byteNumbers[i] = byteCharacters.charCodeAt(i);
+    //                 }
+    //                 const byteArray = new Uint8Array(byteNumbers);
+                    
+    //                 // Create a Blob from the byteArray with a supported audio type
+    //                 const audioBlob = new Blob([byteArray], { type: 'audio/mpeg' }); // Use 'audio/mp3' if necessary
+                    
+    //                 // Generate an object URL for the audio data
+    //                 const audioUrl = URL.createObjectURL(audioBlob);
+                    
+    //                 // Create an Audio object
+    //                 const audio = new Audio(audioUrl);
+                    
+    //                 // Play the audio with error handling
+    //                 audio.play().then(() => {
+    //                     console.log('Audio playing successfully.');
+    //                 }).catch((error) => {
+    //                     console.error('Error playing audio:', error.message, error.name);
+    //                 });
+                    
+    //                 // Clean up the URL after the audio has finished playing
+    //                 audio.onended = () => {
+    //                     URL.revokeObjectURL(audioUrl);
+    //                     console.log('Audio playback ended and URL revoked.');
+    //                 };
+    //             } catch (error) {
+    //                 console.error('Error processing audio stream:', error.message);
     //             }
-    //         });
+    //         } else {
+    //             console.error('No audio data received.');
+    //         }
+    //     };
+        
+    
+    //     if (socketRef.current) {
+    //         socketRef.current.on('audio-stream', handleAudioStream);
+    //     }
+    
+    //     return () => {
+    //         if (socketRef.current) {
+    //             socketRef.current.off('audio-stream', handleAudioStream);
+    //         }
+    //         if (mediaRecorderRef.current) {
+    //             mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    //         }
+    //     };
+    // }, [socketRef.current]);
+    
+    // const startRecording = () => {
+    //     setMute(prev => !prev);
+
+    //     if (mediaRecorderRef.current && localStreamRef.current) {
+    //         console.log('text')
+    //         audioChunksRef.current = [];
+    //         mediaRecorderRef.current.start(1000); // Start recording with 100ms interval for data chunks
+    //         console.log('Voice call started');
     //     }
     // };
+    
+    // const stopRecording = () => {
+    //     setMute(prev => !prev);
+    //     if (mediaRecorderRef.current) {
+    //         mediaRecorderRef.current.stop(); // Stop recording
+    //         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop()); // Stop media stream
+    //         console.log('Voice call ended');
+    //     }
+    // };
+    
 
 
     if (!location.state) {
@@ -368,11 +472,13 @@ function EditorPage() {
         window.location.reload();
     }
 
-    function chatHandler() {
+    function chatHandler(event) {
+        event.preventDefault();
         setBotOn(!botOn);
     }
 
-    const toggleRecording = () => {
+    const toggleRecording = (event) => {
+        event.preventDefault();
         if (!mute) {
             stopRecording();
         } else {
@@ -389,12 +495,13 @@ function EditorPage() {
 
                 <img src={imageL} className='h-[100%]' />
                 <div className='flex justify-evenly'>
-                    <button onClick={chatHandler} className='text-white bg-zinc-600 mr-4 py-2 px-3'>Chat with AI</button>
+                    
+                    <button onClick={chatHandler} className='text-white bg-zinc-600 py-2 px-3 rounded-md mx-2'>Chat with AI</button>
                     {
                         botOn ? (<Chatbot color="#cecece" setBotOn={setBotOn} codeRef={codeRef} />) : (<div />)
                     }
-                    <button className='bg-white py-1 text-base rounded-lg font-medium focus:outline-none px-4 mr-2' onClick={handleCopy}>Copy ROOM ID</button>
-                    <button className='bg-green-500 text-green-950  text-base font-medium hover:bg-green-700 rounded-lg py-1 px-8 mr-2' onClick={handleLeave}>Leave</button>
+                    <button className='bg-white py-1 text-base rounded-lg font-medium focus:outline-none px-4' onClick={handleCopy}>Copy ROOM ID</button>
+                    <button className='bg-green-500 text-green-950  text-base font-medium hover:bg-green-700 rounded-lg py-1 px-8 mr-2 mx-2' onClick={handleLeave}>Leave</button>
                 </div>
 
             </div>
@@ -421,7 +528,7 @@ function EditorPage() {
                             !mute? <FaMicrophone className='bg-[#d9d9d9] w-full h-full text-black p-5 rounded-full  ' /> : <IoMdMicOff className='bg-[#323439] w-full h-full text-[#d9d9d9] p-5 rounded-full ' />
                         }
                         </button>
-                        <div className='text-[#d9d9d9] text-sm h-[20px] w-full text-center tracking-normal'>{ !mute? 'Listening...': ''}</div>
+                        <div className='text-[#d9d9d9] text-sm h-[20px] w-full text-center tracking-normal'>{ !mute? 'Recording...': ''}</div>
                     </div>
 
                     {/* <VoiceChatComponent socketRef={socketRef} roomId={location.state.roomId} /> */}

@@ -6,7 +6,6 @@ import { SyncLoader } from 'react-spinners';
 import { RxCross2 } from "react-icons/rx";
 import './chat.css'
 import MarkdownMessage from './MarkdownMessage';
-import logo from './file.png'
 import {
     useMutation,
 } from 'react-query'

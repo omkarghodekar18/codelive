@@ -140,7 +140,7 @@ io.on('connection', (socket) => {
 
 
     socket.on('audio-stream', (data) => {
-
+        console.log(data);
         socket.in(data.roomId).emit('audio-stream', { data });
     });
 

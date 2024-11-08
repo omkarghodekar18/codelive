@@ -69,7 +69,7 @@ function Editor({ socketRef, roomId, onCodeChange }) {
         socketRef.current.off(ACTIONS.CODE_CHANGE);
       }
     }
-  },[socketRef.current]);
+  },socketRef.current);
 
   return (
     <textarea ref={editorRef} id="realTimeEditor" className="realTimeEditor" />

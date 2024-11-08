@@ -33,8 +33,7 @@
   },
   "scripts": {
     "start:front": "react-scripts start",
-    "startt": "npm install && npm run build",
-    "start": "node server.js",
+    "start": "npm install && npm run build",
     "build": "react-scripts build",
     "server": "nodemon server.js",
     "test": "react-scripts test",
