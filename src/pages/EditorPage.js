@@ -89,7 +89,7 @@ function EditorPage() {
             const handleJoined = ({ clients, userName, socketId }) => {
                 if (userName !== location.state.userName) {
                     toast.success(`${userName} joined the ROOM`);
-                    console.log(`${userName} joined the ROOM`);
+                    // console.log(`${userName} joined the ROOM`);
                 }
                 setClient(clients);
             };
@@ -98,7 +98,7 @@ function EditorPage() {
             socketRef.current.on(ACTIONS.JOINED, ({ clients, userName, socketId }) => {
                 if (userName !== location.state?.userName && flg !== true) {
                     toast.success(`${userName} joined the room.`);
-                    console.log(`${userName} joined`);
+                    // console.log(`${userName} joined`);
                     flg = true;
                 }
                 setClient(clients);
@@ -239,7 +239,7 @@ function EditorPage() {
                 };
 
                 mediaRecorderRef.current.onstop = () => {
-                    console.log('Media recorder stopped'); // Debug check
+                    // console.log('Media recorder stopped'); // Debug check
                     const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
 
                     if (audioBlob.size > 0) { // Check if the blob has data
@@ -253,7 +253,7 @@ function EditorPage() {
                                     audio: base64data,
                                     roomId: location.state.roomId,
                                 });
-                                console.log('Audio data sent to server');
+                                // console.log('Audio data sent to server');
                             } else {
                                 console.error('Socket not connected');
                             }
@@ -277,10 +277,10 @@ function EditorPage() {
         // Set up listener for incoming audio streams
 
         const handleAudioStream = (data) => {
-            console.log(data)
+            // console.log(data)
 
             if (data.data.audio) {
-                console.log('Received audio stream');
+                // console.log('Received audio stream');
                 const byteCharacters = atob(data.data.audio);
                 const byteNumbers = new Array(byteCharacters.length);
                 for (let i = 0; i < byteCharacters.length; i++) {
@@ -322,12 +322,12 @@ function EditorPage() {
     const startRecording = () => {
 
         setMute(prev => !prev);
-        console.log(mute);
+        // console.log(mute);
 
         if (mediaRecorderRef.current && localStreamRef.current) {
             audioChunksRef.current = []; // Reset chunks before starting
             mediaRecorderRef.current.start(); // Start recording
-            console.log('Recording started');
+            // console.log('Recording started');
         }
     };
 
@@ -335,11 +335,11 @@ function EditorPage() {
     const stopRecording = () => {
 
         setMute(prev => !prev);
-        console.log(mute);
+        // console.log(mute);
 
         if (mediaRecorderRef.current) {
             mediaRecorderRef.current.stop(); // Stop recording
-            console.log('Recording stopped');
+            // console.log('Recording stopped');
         }
     };
 
