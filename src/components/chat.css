@@ -71,7 +71,7 @@
   background: #232423;
   color: white;
   padding-left: 15px; 
-  max-width: 80%;
+  max-width: 60%;
   padding-right : 15px;
   border-radius: 25px;
 }
@@ -80,7 +80,7 @@
 
 .message.model {
   align-self: flex-start;
-  max-width: 80%;
+  max-width: 60%;
   
   /* background-color: #f1f1f1; */
 }
