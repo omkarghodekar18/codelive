@@ -1,71 +1,132 @@
-# Getting Started with Create React App
+# 🚀 CodeLive - Realtime Code Editor & Compiler
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-CodeLive-blue)](https://codelive-o86i.onrender.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/omkarghodekar18/codelive)
 
-## Available Scripts
+> A powerful real-time collaborative code editor and compiler that brings teams together for seamless coding sessions with instant communication and code execution capabilities.
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+### 🔄 **Real-time Collaboration**
+- **Multi-user Support**: Up to 10+ users can collaborate simultaneously
+- **Live Code Synchronization**: See changes in real-time as teammates type
+- **Instant User Management**: Join/leave notifications with user avatars
+- **Room-based Sessions**: Create or join coding rooms with unique IDs
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 💻 **Code Editor & Compilation**
+- **Advanced Code Editor**: Powered by CodeMirror with syntax highlighting
+- **Multi-language Support**: C, C++, Java, Python, and JavaScript
+- **Real-time Compilation**: Execute code using Judge0 API integration
+- **Input/Output Handling**: Interactive input/output for program testing
+- **Live Output Sync**: Compilation results shared across all users
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🎙️ **Voice Communication**
+- **Built-in Voice Chat**: WebRTC-powered audio communication
+- **Push-to-Talk**: Toggle microphone on/off for focused discussions
+- **Real-time Audio Streaming**: Low-latency voice transmission using Socket.IO
 
-### `npm test`
+### 🤖 **AI-Powered Assistant**
+- **Integrated Chatbot**: Google Gemini AI for instant coding help
+- **Context-Aware**: AI understands your code and provides relevant assistance
+- **Markdown Support**: Rich text formatting in chat responses
+- **Persistent Chat History**: Conversation maintains context throughout session
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🎨 **User Experience**
+- **Modern UI**: Clean, responsive design with Tailwind CSS
+- **Dark Theme**: Developer-friendly dark mode interface
+- **User Avatars**: Unique avatar generation using DiceBear
+- **Toast Notifications**: Real-time feedback for user actions
+- **Mobile Responsive**: Works seamlessly across devices
 
-### `npm run build`
+## 🛠️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Frontend
+- **React 18** - Modern UI framework
+- **Tailwind CSS** - Utility-first styling
+- **CodeMirror** - Advanced code editor
+- **Socket.IO Client** - Real-time communication
+- **React Router** - Navigation and routing
+- **React Hot Toast** - Notification system
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Backend
+- **Node.js & Express** - Server framework
+- **Socket.IO** - WebSocket communication
+- **Judge0 API** - Code compilation service
+- **Google Gemini AI** - Chatbot integration
+- **CORS** - Cross-origin resource sharing
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### APIs & Services
+- **Judge0 CE** - Multi-language code execution
+- **Google Generative AI** - AI chatbot responses
+- **WebRTC** - Peer-to-peer voice communication
 
-### `npm run eject`
+## 🚀 Quick Start
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🎯 How to Use
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Starting a Coding Session
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. **Create a Room**: Generate a unique room ID for your session
+2. **Share Room ID**: Invite teammates using the room ID
+3. **Start Coding**: Write code collaboratively in real-time
+4. **Compile & Test**: Execute code with custom inputs
+5. **Communicate**: Use voice chat or AI assistant for help
 
-## Learn More
+### Supported Languages
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+| Language | Language ID | File Extensions |
+|----------|-------------|-----------------|
+| C        | 50          | `.c`           |
+| C++      | 54          | `.cpp, .cc`    |
+| Java     | 91          | `.java`        |
+| Python   | 100         | `.py`          |
+| JavaScript | 93        | `.js`          |
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Voice Chat Controls
+- **🎤 Microphone Toggle**: Click to start/stop recording
+- **Recording Indicator**: Visual feedback when voice is active
+- **Real-time Streaming**: Audio automatically shared with room participants
 
-### Code Splitting
+### AI Chatbot Commands
+- Ask coding questions in natural language
+- Request code explanations and debugging help
+- Get syntax help and best practices
+- Markdown-formatted responses for better readability
+  
+## 🚀 Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The application is deployed on Render with automatic builds from the main branch.
 
-### Analyzing the Bundle Size
+**Live URL**: [https://codelive-o86i.onrender.com](https://codelive-o86i.onrender.com)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+## 🤝 Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 👨‍💻 Author
 
-### Deployment
+**Omkar Ghodekar**
+- GitHub: [@omkarghodekar18](https://github.com/omkarghodekar18)
+- LinkedIn: [Connect with Omkar](https://www.linkedin.com/in/omkarghodekar18)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🙏 Acknowledgments
 
-### `npm run build` fails to minify
+- [Judge0 CE](https://judge0.com/) for code compilation services
+- [Google Gemini AI](https://ai.google.dev/) for chatbot capabilities
+- [Socket.IO](https://socket.io/) for real-time communication
+- [CodeMirror](https://codemirror.net/) for the code editor
+- [DiceBear](https://dicebear.com/) for avatar generation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# editor-compiler
+---
+
+⭐ **Star this repository if you found it helpful!**
